@@ -1,38 +1,62 @@
 pipeline {
     agent any
 
+    environment {
+        BUILD_DIR = "build"
+        EXECUTABLE = "app"
+    }
+
     stages {
+
         stage('Checkout') {
             steps {
-                git 'https://github.com/Prem-krish-308/CPP-CI-Project.git'
+                git branch: 'main', url: 'https://github.com/Prem-krish-308/CPP-CI-Project.git'
+            }
+        }
+
+        stage('Clean') {
+            steps {
+                sh 'rm -rf ${BUILD_DIR}'
+                sh 'mkdir -p ${BUILD_DIR}'
             }
         }
 
         stage('Build') {
             steps {
-                sh 'make build'
+                sh '''
+                echo "Building project..."
+                make clean || true
+                make
+                '''
             }
         }
 
         stage('Test') {
             steps {
-                sh './runtests.sh'
+                sh '''
+                echo "Running tests..."
+                chmod +x runtests.sh
+                ./runtests.sh
+                '''
             }
         }
 
-        stage('Archive') {
+        stage('Archive Artifacts') {
             steps {
-                archiveArtifacts artifacts: 'build/*', fingerprint: true
+                archiveArtifacts artifacts: '**/${EXECUTABLE}', fingerprint: true
             }
         }
     }
 
     post {
         success {
-            echo '✅ CI Passed'
+            echo '✅ Build & Tests Passed!'
         }
         failure {
-            echo '❌ CI Failed'
+            echo '❌ Build Failed!'
+        }
+        always {
+            echo 'Pipeline finished.'
         }
     }
 }
