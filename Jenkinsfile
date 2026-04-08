@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        // Optional if configured
-    }
-
     stages {
         stage('Checkout') {
             steps {
