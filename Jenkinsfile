@@ -16,14 +16,14 @@ pipeline {
 
         stage('Clean') {
             steps {
-                sh 'rm -rf ${BUILD_DIR}'
-                sh 'mkdir -p ${BUILD_DIR}'
+                bat 'rm -rf ${BUILD_DIR}'
+                bat 'mkdir -p ${BUILD_DIR}'
             }
         }
 
         stage('Build') {
             steps {
-                sh '''
+                bat '''
                 echo "Building project..."
                 make clean || true
                 make
@@ -33,7 +33,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh '''
+                bat '''
                 echo "Running tests..."
                 chmod +x runtests.sh
                 ./runtests.sh
